@@ -227,13 +227,13 @@ class SWIFT_FreshbooksWrapper extends SWIFT_Library
 		$this->_freshbooksObject->post(array(
 			"time_entry" => array(
 			"project_id" => $_projectId,
-			"task_id"	=> $_taskId,
-			"staff_id"	=> $_staffId,
-			"hours"	=> $_hours,
-			"notes"	=> $_notes,
-			"date"	=> $_date,
-			'per_page' => '50'
-		)));
+			"task_id"    => $_taskId,
+			"staff_id"   => $_staffId,
+			"hours"      => $_hours,
+			"notes"      => $_notes,
+			"date"       => $_date,
+			"per_page"   => '50'
+			)));
 
 		$this->_freshbooksObject->request();
 
