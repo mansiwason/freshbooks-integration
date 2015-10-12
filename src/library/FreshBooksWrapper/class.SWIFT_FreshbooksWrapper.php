@@ -231,7 +231,8 @@ class SWIFT_FreshbooksWrapper extends SWIFT_Library
 			"staff_id"	=> $_staffId,
 			"hours"	=> $_hours,
 			"notes"	=> $_notes,
-			"date"	=> $_date
+			"date"	=> $_date,
+			'per_page' => '50'
 		)));
 
 		$this->_freshbooksObject->request();
