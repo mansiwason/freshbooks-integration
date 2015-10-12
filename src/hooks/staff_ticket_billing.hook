@@ -1,0 +1,64 @@
+<?php
+/**
+ * ###############################################
+ *
+ * Freshbooks Integration
+ * _______________________________________________
+ *
+ * @author         Varun Shoor
+ *
+ * @package        Freshbooks Integration
+ * @copyright      Copyright (c) 2001-2015, Kayako
+ * @license        http://www.kayako.com/license
+ * @link           http://www.kayako.com
+ *
+ * ###############################################
+ */
+
+/**
+ * 'staff_ticket_billing' hook file
+ * This hook is executed when the Billing tab data is submitted.
+ *
+ * @author Ashish Kataria
+ *
+ */
+
+// Check if freshbooks is enabled or not by admin
+if ($_SWIFT->Settings->Get('freshbooks_enable'))
+{
+	// Check if the staff wants to create time entry in freshbooks or not
+	if ($_POST['billingfbinvoice'])
+	{
+
+		// Load freshbooks wrapper library
+		$this->Load->Library('FreshBooksWrapper:FreshbooksWrapper', false, false, 'freshbooks');
+
+		// Convert time in decimal format
+		$_billingTimeSec = self::GetBillingTime($_POST['billingtimebillable']);
+		$_time = $_billingTimeSec / 3600;
+
+		// Convert date in YYYY-MM-DD format
+		$_date = date("Y-m-d", strtotime($_POST['billworkdate']));
+
+		// Replace {[ticket_id]} token with ticket id in notes
+		$_POST['billingnotes'] = str_replace("{[ticket_id]}", $_SWIFT_TicketObject->ticketmaskid, $_SWIFT->Settings->Get('freshbooks_defaultNote')). SWIFT_CRLF . $_POST['billingnotes'];
+
+		// Create time entry in freshbooks
+		$_freshbooksWrapperObject = new SWIFT_FreshbooksWrapper();
+		$_freshbooksWrapperObject->SetApiDetails($_SWIFT->Settings->Get('freshbooks_apiUrl'), $_SWIFT->Settings->Get('freshbooks_authenticationToken'));
+		$_freshbooksWrapperObject->CreateTimeEntry($_POST['billingfbproject'], $_POST['billingfbtask'], $_POST['billingfbuser'], $_time, $_date, $_POST['billingnotes']);
+
+		// Check if any entry for corresponding ticket id exits in db or not
+		$this->Database->Query("SELECT count(*) AS total FROM " . TABLE_PREFIX . "freshbooksticketmap WHERE ticketid = " . intval($_ticketID));
+
+		while ($this->Database->NextRecord()) {
+			$_freshbooksCheck = $this->Database->Record['total'];
+		}
+
+		// If no entry for corresponding ticket id exits then insert one
+		if (!$_freshbooksCheck) {
+			$this->Database->AutoExecute(TABLE_PREFIX . 'freshbooksticketmap', array('ticketid' => intval($_ticketID)), 'INSERT', '1=1');
+		}
+	}
+}
+?>

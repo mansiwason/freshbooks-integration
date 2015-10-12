@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<swiftsettings>
+	<group name="settings_freshbooks" app="freshbooks" ishidden="0">
+		<setting name="freshbooks_enable" type="yesno">
+			<defaultvalue></defaultvalue>
+		</setting>
+		<setting name="freshbooks_apiUrl" type="url">
+			<defaultvalue></defaultvalue>
+		</setting>
+		<setting name="freshbooks_authenticationToken" type="text">
+			<defaultvalue></defaultvalue>
+		</setting>
+		<setting name="freshbooks_verifyconnection" type="custom">
+			<customcode>
+				<![CDATA[
+					<?php $_SWIFT->Language->LoadApp('freshbooks', 'freshbooks'); ?>
+					<script type="text/javascript">
+						jQuery(document).ready(function()
+						{
+							SWIFT.Freshbooks.AdminObject.set('url',  jQuery("#freshbooks_apiUrl").val());
+							SWIFT.Freshbooks.AdminObject.set('token', jQuery("#freshbooks_authenticationToken").val());
+
+							SWIFT.Freshbooks.AdminObject.set('freshbooks_default_task', "<?php echo $_SWIFT->Settings->Get('freshbooks_default_task'); ?>");
+							SWIFT.Freshbooks.AdminObject.set('freshbooks_default_project', "<?php echo $_SWIFT->Settings->Get('freshbooks_default_project'); ?>");
+							SWIFT.Freshbooks.AdminObject.set('freshbooks_wait', "<?php echo $_SWIFT->Language->Get('freshbooks_wait');?>");
+							SWIFT.Freshbooks.AdminObject.set('invalid_data_error', "<?php echo $_SWIFT->Language->Get('invalid_data_error');?>");
+							SWIFT.Freshbooks.AdminObject.set('request_fail_error', "<?php echo $_SWIFT->Language->Get('request_fail_error');?>");
+
+							jQuery("#freshbooks_testconnection").click(function() {
+								SWIFT.Freshbooks.AdminObject.TestConnectionButtonClick();
+							});
+
+							jQuery("#freshbooks_default_project").change(function() {
+								SWIFT.Freshbooks.AdminObject.DefaultProjectChange();
+							}).trigger('change');
+						});
+
+					</script>
+					<input type="button" name="freshbooks_testconnection" id="freshbooks_testconnection" value="Verify Connection" />
+					<span id="response"></span>
+				]]>
+			</customcode>
+		</setting>
+		<setting name="freshbooks_default_project" type="custom">
+			<customcode>
+				<![CDATA[
+					<select name="freshbooks_default_project" id="freshbooks_default_project" class="swiftselect">
+						<?php
+
+							if (trim($_SWIFT->Settings->Get('freshbooks_apiUrl')) != ''  && trim($_SWIFT->Settings->Get('freshbooks_authenticationToken')) != '') {
+
+								$this->Load->Library('FreshBooksWrapper:FreshbooksWrapper', false, false, 'freshbooks');
+
+								$this->_freshbooksWrapperObject = new SWIFT_FreshbooksWrapper();
+
+								$this->_freshbooksWrapperObject->SetApiDetails($_SWIFT->Settings->Get('freshbooks_apiUrl'), $_SWIFT->Settings->Get('freshbooks_authenticationToken'));
+								$_response = $this->_freshbooksWrapperObject->GetProjectList("array");
+
+								if (isset($_response['projects']['project']) && _is_array($_response['projects']['project']))
+								{
+									if (isset($_response['projects']['project']['0']))
+									{
+										foreach($_response['projects']['project'] as $_project) {
+											$_selected = '';
+											if ($_SWIFT->Settings->Get('freshbooks_default_project') == $_project['project_id'])
+											{
+												$_selected = 'selected';
+											}
+
+											echo "<option value='".$_project['project_id']."' $_selected>".$_project['name']."</option>";
+										}
+									} else {
+										echo "<option value='".$_response['projects']['project']['project_id']."'>".$_response['projects']['project']['name']."</option>";
+									}
+								} else	 {
+									echo "<option value='0'>No project found</option>";
+									break;
+								}
+							}
+							else {
+								echo '<option value="0">None</option>';
+							}
+						?>
+					</select>
+				]]>
+			</customcode>
+		</setting>
+		<setting name="freshbooks_default_task" type="custom">
+			<customcode>
+				<![CDATA[
+					<select name="freshbooks_default_task" id="freshbooks_default_task" class="swiftselect">
+						<?php
+							if (trim($_SWIFT->Settings->Get('freshbooks_apiUrl')) != ''  && trim($_SWIFT->Settings->Get('freshbooks_authenticationToken')) != '') {
+
+								$_response = $this->_freshbooksWrapperObject->GetTaskList($_SWIFT->Settings->Get('freshbooks_default_project'), "array");
+
+								if (isset($_response['tasks']['task']) && _is_array($_response['tasks']['task']))
+								{
+									if (isset($_response['tasks']['task']['0']))
+									{
+										foreach($_response['tasks']['task'] as $_task) {
+											$_selected = '';
+											if ($_SWIFT->Settings->Get('freshbooks_default_task') == $_task['task_id'])
+											{
+												$_selected = 'selected';
+											}
+											echo "<option value='".$_task['task_id']."' $_selected>".$_task['name']."</option>";
+										}
+									} else {
+										echo "<option value='".$_response['tasks']['task']['task_id']."' >".$_response['tasks']['task']['name']."</option>";
+									}
+								}
+							} else {
+								echo '<option value="0">None</option>';
+							}
+						?>
+					</select>
+				]]>
+			</customcode>
+		</setting>
+		<setting name="freshbooks_defaultNote" type="text">
+			<defaultvalue>Kayako Ticket Id : {[ticket_id]}</defaultvalue>
+		</setting>
+	</group>
+</swiftsettings>

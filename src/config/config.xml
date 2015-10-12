@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<title>Fresh Books</title>
+	<description>FreshBooks is the fastest way to track and invoice your clients. With a FreshBooks option enabled you can log the time you spend on help desk tickets. Select freshbook on the ticket page and you will be able to log time on each ticket.</description>
+	<author>Ashish Kataria</author>
+	<version>1.0.1</version>
+	<compatibleWith>4.01.204</compatibleWith>
+</config>
