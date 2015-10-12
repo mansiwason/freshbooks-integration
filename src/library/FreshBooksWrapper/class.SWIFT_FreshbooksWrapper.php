@@ -218,6 +218,12 @@ class SWIFT_FreshbooksWrapper extends SWIFT_Library
 
 		$this->_freshbooksObject = new FreshBooksRequest('time_entry.create');
 
+		if ($_hours != "0.0"){
+			$_hours_array = explode(".", $_hours);
+			$total_min = $_hours_array[0] * 60;
+			$total_min += $_hours_array[1];
+			$_hours = $total_min/60;
+		}
 		$this->_freshbooksObject->post(array(
 			"time_entry" => array(
 			"project_id" => $_projectId,
