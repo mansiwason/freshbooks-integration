@@ -1,20 +1,9 @@
 <?php
 /**
- * ###############################################
- *
- * Freshbooks Integration
- * _______________________________________________
- *
- * @author         Varun Shoor
- *
- * @package        Freshbooks Integration
- * @copyright      Copyright (c) 2001-2015, Kayako
- * @license        http://www.kayako.com/license
- * @link           http://www.kayako.com
- *
- * ###############################################
+ * @copyright      2001-2015 Kayako
+ * @license        https://www.freebsd.org/copyright/freebsd-license.html
+ * @link           https://github.com/kayako/freshbooks-integration
  */
-
 $__LANG = array(
 	// ======= Genral =======
 	"freshbooks_name"		=> "Fresh Books",
