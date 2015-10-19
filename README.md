@@ -29,7 +29,7 @@ Kayako: v4.51.x and above
 Installation Steps
 =======================
 1. Download and extract the Kayako-Freshbooks integration
-2. Create a symlink of src/ as freshbooks and place it in /path/to/your/installation/__apps/
+2. Create a symlink of src/ as freshbooks under Helpdesk_installation/__apps/
 3. Go to Admin interface of your helpdesk and click on Apps on left hand side menu
 4. Now click on Freshbooks and then click on Install button, this will install this app
 5. Now click on Settings option from left side menu and click on Freshbooks
